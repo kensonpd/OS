@@ -1,8 +1,32 @@
 #include<stdio.h>
 #include<stdlib.h>
- 
 int mutex=1,full=0,empty=3,x=0;
- 
+int wait(int s)
+{
+    return (--s);
+}
+int signal(int s)
+{
+    return(++s);
+}
+void producer()
+{
+    mutex=wait(mutex);
+    full=signal(full);
+    empty=wait(empty);
+    x++;
+    printf("\nProducer produces the item %d",x);
+    mutex=signal(mutex);
+}
+void consumer()
+{
+    mutex=wait(mutex);
+    full=wait(full);
+    empty=signal(empty);
+    printf("\nConsumer consumes item %d",x);
+    x--;
+    mutex=signal(mutex);
+}
 int main()
 {
     int n;
@@ -31,37 +55,30 @@ int main()
                     exit(0);
                     break;
         }
-    }
-   
+    }  
     return 0;
 }
- 
-int wait(int s)
-{
-    return (--s);
-}
- 
-int signal(int s)
-{
-    return(++s);
-}
- 
-void producer()
-{
-    mutex=wait(mutex);
-    full=signal(full);
-    empty=wait(empty);
-    x++;
-    printf("\nProducer produces the item %d",x);
-    mutex=signal(mutex);
-}
- 
-void consumer()
-{
-    mutex=wait(mutex);
-    full=wait(full);
-    empty=signal(empty);
-    printf("\nConsumer consumes item %d",x);
-    x--;
-    mutex=signal(mutex);
-}
+
+/*
+1.Producer
+2.Consumer
+3.Exit
+Enter your choice:1
+
+Producer produces the item 1
+Enter your choice:2
+
+Consumer consumes item 1
+Enter your choice:12
+Enter your choice:1
+
+Producer produces the item 1
+Enter your choice:2
+
+Consumer consumes item 1
+Enter your choice:2
+Buffer is empty!!
+Enter your choice:2
+Buffer is empty!!
+Enter your choice:2
+Buffer is empty!!*/
